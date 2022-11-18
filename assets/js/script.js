@@ -10,6 +10,24 @@ $(function () {
   // function? How can DOM traversal be used to get the "hour-x" id of the
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
+
+  // Whole schedule container
+  var container = $(".container-lg");
+  container.on("click", ".saveBtn", function(event) {
+    console.log("button clicked");
+
+    var btnClicked = event.target;
+    if (btnClicked.matches(".saveBtn")) {
+      var hourDiv = $(btnClicked).parent("div");
+    } else if (btnClicked.matches(".fa-save")) {
+      var hourDiv = $(btnClicked).parent("button").parent("div");
+    }
+    console.log(hourDiv);
+
+    var hourKey = $(hourDiv).attr("id");
+    var hourValue = $(hourDiv).children("textarea").val();
+    localStorage.setItem(hourKey, hourValue);
+  })
   
   // TODO: Add code to apply the past, present, or future class to each time
   // block by comparing the id to the current hour. HINTS: How can the id
@@ -26,8 +44,8 @@ $(function () {
   $.each(timeblocks, function(i, hour) {
     console.log($(hour).attr("id"));
     // Grab hour number after the "-" from ID for each hour <div> 
-    var hourID = ($(hour).attr("id")).split("-");
-    var hourNum = Number(hourID[1]);
+    var hourID = $(hour).attr("id");
+    var hourNum = Number(hourID.split("-")[1]);
 
     // Compare hourNum to currentHour and assign proper class to hour <div>
     if (hourNum < currentHour) {
@@ -39,6 +57,11 @@ $(function () {
     } else {
       console.log(">");
       $(hour).addClass("future");
+    }
+
+    var savedEvents = localStorage.getItem(hourID);
+    if (savedEvents) {
+      $(hour).children("textarea").val(savedEvents);
     }
   })  
 
